@@ -38,49 +38,9 @@ input{
 </head>
 <body>
 
-<!-- Navbar -->
-<div class="w3-top">
-  <div class=" w3-black w3-card w3-left-align w3-large">
-
-    <!-- <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
-    <a href="homepage2.php" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a> -->
-    <div class="navbar">
-  <a href="../homepage/homepage2.php">Home</a>
-  <a href="../community/create_community.php">Create Community</a>
-  <div class="dropdown">
-  <button class="dropbtn">My Communities 
-    <i class="fa fa-caret-down"></i>
-  </button>
-  <div class="dropdown-content">
-    <?php
-
-    require '../configure.php';
-    // Connect to the database
-    $connection = mysqli_connect(DB_SERVER, DB_USER, DB_PASS);
-    $db = mysqli_select_db($connection, 'event_management');
-
-    // Query to retrieve communities joined by the current student
-    $query = "SELECT community.c_name, community.c_ID
-              FROM community
-              INNER JOIN joins ON community.c_ID = joins.c_ID
-              WHERE joins.s_ID = '{$_SESSION['s_ID']}'";
-    
-    $query_run = mysqli_query($connection, $query);
-    // Iterate over the retrieved communities and display them as dropdown options
-    while ($row = mysqli_fetch_array($query_run)) {
-      $c_ID = $row['c_ID'];
-      echo  '<a href="../community/community_page.php?c_ID=' . $c_ID . '">' . $row['c_name'] . '</a>';
-    }
-    ?>
-  </div>
-</div>
-  <a href="#">My Account</a>
-  <a href="../login/logout.php">Logout</a>
-</div>
-    <!-- <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">My Account</a>
-    <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">My Order</a> -->
-</div>
-</div>
+<?php
+require '../navbar.php';
+?>
 <!-- Header -->
 <header class="w3-container w3-black w3-center" style="padding:128px 16px">
 <!-- <h2>Welcome <?php echo $_SESSION['name']?></h2> -->
@@ -130,18 +90,21 @@ if(isset($_POST['upload']))
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
 
+        //prints out a message if the name field is empty
         if (strlen($name)==0)
         {
             echo '<script type="text/javascript"> alert("Please enter Community Name")</script>';
 
         }
 
+        //prints out a message if the description field is empty
         else if (strlen($description)==0)
         {
             echo '<script type="text/javascript"> alert("Please enter Community Description")</script>';
 
         }
 
+        //prints out a message if the community name is taken
         else if (mysqli_num_rows($result) > 0)
         {
             echo '<script type="text/javascript"> alert("Community Name already taken")</script>';
@@ -162,9 +125,7 @@ if(isset($_POST['upload']))
             {
               echo '<script type="text/javascript"> alert("Community created successfully")</script>';
               //insert current user id and community id to admin table 
-              $adminquery = "INSERT INTO `admin` (`c_ID`,`s_ID`) VALUES ('$c_id' , '{$_SESSION['s_ID']}' )";
-              $adminquery_run = mysqli_query($connection, $adminquery);
-              $joinquery = "INSERT INTO `joins` (`s_ID` , `c_ID`) VALUES ('{$_SESSION['s_ID']}' , '$c_id')";
+              $joinquery = "INSERT INTO `joins` (`s_ID` , `c_ID`,`role`) VALUES ('{$_SESSION['s_ID']}' , '$c_id','admin')";
               $joinquery_run = mysqli_query($connection, $joinquery);
             }
           } 
