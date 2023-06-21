@@ -17,24 +17,10 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="../homepage/homepage2.css">
+<link rel="stylesheet" href="event.css">
 <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
 
-<style>
-body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
-.w3-bar,h1,button {font-family: "Montserrat", sans-serif}
-.fa-anchor,.fa-coffee {font-size:200px}
 
-input{
-    width: 50%;
-    height: 5%;
-    border: 1px;
-    border-radius: 5px;
-    padding: 8px 15px 8px 15px;
-    margin: 10px 0px 15px 0px;
-    box-shadow: 1px 1px 2px 1px grey;
-    font-weight: bold;
-}
-</style>
 </head>
 <body>
 
@@ -129,11 +115,11 @@ if(isset($_POST['upload']))
               $c_name = $community_data['c_name'];
 
             //insert the event into the event table
-            $query = "INSERT INTO event_ (e_name, e_date_start, e_date_end, e_description, e_time, e_venue, c_id, calendar_ID, e_image) VALUES ('$e_name', '$e_start_date',  '$e_end_date', '$e_description', '$e_time', '$e_venue', $c_IDURL ,NULL, NULL )";
+            $query = "INSERT INTO event_ (e_name, e_date_start, e_date_end, e_description, e_time, e_venue, c_id) VALUES ('$e_name', '$e_start_date',  '$e_end_date', '$e_description', '$e_time', '$e_venue', $c_IDURL)";
             $query_run = mysqli_query($connection,$query);
             //get the last auto-incremented id in the database
             $e_id = mysqli_insert_id($connection);
-            $query_notification = "INSERT INTO `notification` (n_name, n_content, n_date, e_ID, c_ID) VALUES (CONCAT('$c_name', ' has posted an event'), CONCAT('$e_name', ' has been posted'), NOW(), $e_id, $c_IDURL)";
+            $query_notification = "INSERT INTO `notification` (n_name, n_content, n_date, e_ID, c_ID, s_ID) VALUES (CONCAT('$c_name', ' has posted an event'), CONCAT('$e_name', ' has been posted'), NOW(), $e_id, $c_IDURL,NULL)";
             $query_run_notification = mysqli_query($connection,$query_notification);
             }
             if($query_run)

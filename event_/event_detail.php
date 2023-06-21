@@ -17,11 +17,11 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="../homepage/homepage2.css">
+
 <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
 
 <style>
-/* CSS styles for the community page */
-/* Customize the styles as per your requirements */
+
 </style>
 </head>
 <body>
@@ -35,7 +35,7 @@ require '../navbar.php';
 </header>
 <?php
 $c_IDURL = $_GET['c_ID']; // Assuming you pass the community ID in the URL
-
+$e_IDURL = $_GET['e_ID'];
 
     //check if the user has pressed the reserve event button
     if (isset($_POST["reserve"])) 
@@ -114,6 +114,66 @@ $c_IDURL = $_GET['c_ID']; // Assuming you pass the community ID in the URL
       }
       </script>';
     }
+    //go to member list page when the button is pressed
+    if (isset($_POST["member_list"]))
+    {
+      header ("Location: ../member_list/member_list_test.php?c_ID=".$c_IDURL);
+    } 
+
+    //when the post event button is pressed go to the post event page
+    if (isset($_POST["post_event"]))
+    {
+      header ("Location: ../event_/post_event.php?c_ID=".$c_IDURL);
+    } 
+    
+    //when the leave is pressed
+    if(isset($_POST["leave"]))
+    {
+      //check if the student is in this community
+      $dltquery = "SELECT * FROM joins WHERE s_ID = {$_SESSION["s_ID"]} AND c_ID = '$c_IDURL'";
+      $deltqueryresult = mysqli_query($connection, $dltquery);
+      //counts the number of admins in this community 
+      $query_count = "SELECT COUNT(*)AS count FROM `joins` WHERE role = 'admin' AND c_ID = $c_IDURL";
+      $query_count_run = mysqli_query($connection, $query_count);
+      //selects the admins in this community 
+      $query_is_admin = "SELECT * FROM `joins` WHERE s_ID = {$_SESSION["s_ID"]} AND c_ID = $c_IDURL AND role = 'admin'";
+      $query_is_admin_run = mysqli_query($connection, $query_is_admin);
+      //check if there is less then one admin in this community 
+        if((mysqli_num_rows($query_count_run) <= 1 )&& (mysqli_num_rows($query_is_admin_run)))
+        {
+          echo "<script>alert('YOU SHALL NOT LEAVE.');</script>";    
+        }
+        else
+        {
+          //student can leave this community
+          $querydlt = "DELETE FROM `joins` WHERE s_ID =  {$_SESSION["s_ID"]} AND c_ID = $c_IDURL";
+          $query_rundlt = mysqli_query($connection, $querydlt);
+          if($query_rundlt)
+          { 
+            echo "<script>alert('Left Successfully.');</script>";
+          }
+        }
+    } 
+    //if the join button is pressed
+    if (isset($_POST["join"])) 
+    {
+      $student_id = $_POST["student_id"];
+      //check if the user is already in the community
+      $sql = "SELECT * FROM joins WHERE s_ID = '$student_id' AND c_ID = '$c_IDURL'";
+      $result = mysqli_query($connection, $sql);
+      // insert the record
+      $sql = "INSERT INTO joins (`s_ID`, `c_ID`, `role`) VALUES ('$student_id','$c_IDURL','member')";
+      if(mysqli_query($connection, $sql))
+        {
+          // join successful
+          echo "<script>alert('You have successfully joined the community.');</script>";
+        } 
+        else 
+        {
+          // join failed
+          echo "<script>alert('Failed to join the community. Please try again.');</script>";
+        }
+    }
 ?>
 
 <!-- Community Content -->
@@ -121,8 +181,55 @@ $c_IDURL = $_GET['c_ID']; // Assuming you pass the community ID in the URL
   <div class="w3-content">
     <div class="w3-twothird">
       
+    <div class="communityStuff">
 
-      
+<?php
+
+  // Retrieve the community information based on the community ID
+  $query = "SELECT * FROM `community` WHERE `c_ID` = '$c_IDURL'";
+  $query_run = mysqli_query($connection, $query);
+
+  // Check if the community exists
+  if (mysqli_num_rows($query_run) > 0) {
+    $row = mysqli_fetch_assoc($query_run);
+    $c_name = $row['c_name'];
+    $c_description = $row['c_description'];
+    $c_image = $row['c_image'];
+
+    // Display the community information
+    echo '<h1>' . $c_name . '</h1>';
+    echo '<img src="data:image;base64,' . base64_encode($c_image) . '" alt="Community Image" style="width: 100px; height: 100px;">';
+    echo '<p>' . $c_description . '</p>';
+    
+    //check if the student has joined this community
+    $queryjoin = "SELECT * FROM joins WHERE s_ID='{$_SESSION["s_ID"]}' AND c_ID= $c_IDURL";
+    $query_runjoin = mysqli_query($connection,$queryjoin);
+    //if joined
+    if(mysqli_num_rows($query_runjoin)>0)
+    {
+        echo "<form method='POST'>";
+        echo "<input type='hidden' name='community_id' value='" . $c_IDURL . "' />";
+        echo "<input type='hidden' name='student_id' value='" . $_SESSION["s_ID"] . "' />";
+        echo "<input type='submit' name='leave' value='Leave' />";
+        echo "</form>";
+    }
+    else
+    {
+        echo "<form method='POST'>";
+        echo "<input type='hidden' name='community_id' value='" . $c_IDURL . "' />";
+        echo "<input type='hidden' name='student_id' value='" . $_SESSION["s_ID"] . "' />";
+        echo "<input type='submit' name='join' value='Join' />";
+        echo "</form>";
+    }
+}
+
+else 
+{
+    echo '<p>Community not found.</p>';
+}
+
+    ?>
+
       <div class="eventStuff">
       <?php
       //check if the user is an admin of the community 
@@ -132,8 +239,17 @@ $c_IDURL = $_GET['c_ID']; // Assuming you pass the community ID in the URL
       $querypost2 = "SELECT * FROM `joins` WHERE s_ID = {$_SESSION["s_ID"]} AND c_ID = $c_IDURL AND (role = 'admin' OR role = 'committee')";
       $querypostrun2 = mysqli_query($connection, $querypost2);
 
+      //if the user is an admin
+      if(mysqli_num_rows($querypostrun) > 0)
+      {
+        echo "<form method='POST' action=''>";
+        echo "<td><input type='submit' name='post_event' value='Post Event' /> </td>";
+        echo "<td><input type='submit' name='member_list' value='Member List' /> </td>";
+        echo "</form>";
+      }
+
       //select the event information in this community
-      $query_view_event= "SELECT `e_ID`,`e_name`, `e_description`, `e_venue`, `e_date_start`, `e_date_end`, `e_time` FROM event_ WHERE c_ID = $c_IDURL ORDER BY `event_`.`e_ID` DESC";
+      $query_view_event= "SELECT `e_ID`,`e_name`, `e_description`, `e_venue`, `e_date_start`, `e_date_end`, `e_time` FROM event_ WHERE c_ID = $c_IDURL AND e_ID= $e_IDURL";
       $query_view_event_run = mysqli_query($connection, $query_view_event);
       //if there is event posted in this community
       if(mysqli_num_rows($query_view_event_run) > 0)
@@ -199,7 +315,7 @@ $c_IDURL = $_GET['c_ID']; // Assuming you pass the community ID in the URL
       
       ?>
       </div>
-      
+      </div>
     </div>
   </div>
 </div>
