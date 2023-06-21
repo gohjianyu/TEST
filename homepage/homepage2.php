@@ -39,49 +39,9 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 </head>
 <body>
 
-<!-- Navbar -->
-<div class="w3-top">
-  <div class=" w3-black w3-card w3-left-align w3-large">
-
-    <!-- <a class="w3-bar-item w3-button w3-hide-medium w3-hide-large w3-right w3-padding-large w3-hover-white w3-large w3-red" href="javascript:void(0);" onclick="myFunction()" title="Toggle Navigation Menu"><i class="fa fa-bars"></i></a>
-    <a href="homepage2.php" class="w3-bar-item w3-button w3-padding-large w3-white">Home</a> -->
-    <div class="navbar">
-    <a href="../homepage/homepage2.php">Home</a>
-  <a href="../community/create_community.php">Create Community</a>
-  <div class="dropdown">
-  <button class="dropbtn">My Communities 
-    <i class="fa fa-caret-down"></i>
-  </button>
-  <div class="dropdown-content">
-    <?php
-
-    require '../configure.php';
-    // Connect to the database
-    $connection = mysqli_connect(DB_SERVER, DB_USER, DB_PASS);
-    $db = mysqli_select_db($connection, 'event_management');
-
-    // Query to retrieve communities joined by the current student
-    $query = "SELECT community.c_name, community.c_ID
-              FROM community
-              INNER JOIN joins ON community.c_ID = joins.c_ID
-              WHERE joins.s_ID = '{$_SESSION['s_ID']}'";
-    
-    $query_run = mysqli_query($connection, $query);
-    // Iterate over the retrieved communities and display them as dropdown options
-    while ($row = mysqli_fetch_array($query_run)) {
-      $c_ID = $row['c_ID'];
-      echo  '<a href="../community/community_page.php?c_ID=' . $c_ID . '">' . $row['c_name'] . '</a>';
-    }
-    ?>
-  </div>
-</div>
-  <a href="#">My Account</a>
-  <a href="../login/logout.php">Logout</a>
-</div>
-    <!-- <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">My Account</a>
-    <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">My Order</a> -->
-</div>
-</div>
+<?php
+require '../navbar.php';
+?>
 
 <!-- Header -->
 <header class="w3-container w3-black w3-center" style="padding:128px 16px">
@@ -91,12 +51,55 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 <img src="distedlogo.png" alt="Disted Logo" style= "height:20%; width:50%;"> 
 </header>
 
+<?php
+
+//if the form is posted
+if (isset($_POST["join"])) 
+{
+$student_id = $_POST["student_id"];
+$community_id = $_POST["community_id"];
+//check if the user is already in the community
+$sql = "SELECT * FROM joins WHERE s_ID = '$student_id' AND c_ID = '$community_id'";
+$result = mysqli_query($connection, $sql);
+if(mysqli_num_rows($result) > 0)
+{
+    // record already exists
+    echo "<script>alert('You have already joined this community.');</script>";
+} 
+
+else 
+{
+    // insert the record
+    $sql = "INSERT INTO joins (`s_ID`, `c_ID`,`role`) VALUES ('$student_id','$community_id','member')";
+    if(mysqli_query($connection, $sql))
+    {
+        // join successful
+        echo "<script>alert('You have successfully joined the community.');</script>";
+    } 
+
+    else 
+    {
+        // join failed
+        echo "<script>alert('Failed to join the community. Please try again.');</script>";
+    }
+}
+}
+
+if (isset($_POST["view"]))
+{
+  $community_id = $_POST['community_id'];
+  header ("Location: ../community/community_page.php?c_ID=".$community_id);
+} 
+?>
+
 <!-- First Grid -->
 <div class="w3-row-padding w3-padding-64 w3-container">
   <div class="w3-content">
     <div class="w3-twothird">
       <h1>Calendar</h1>
-
+      <?php
+      require 'calendar.php'
+      ?>
       <h1>Communities</h1> 
 
       <center>
@@ -137,7 +140,11 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
                         if(mysqli_num_rows($query_run2)>0)
                         {
                           echo "<button disabled>Joined</button>";
-                          echo "<a href = '../community/community_page.php?c_ID=".$row['c_ID']."'> View </a>";
+                          echo "<form method='POST'>";
+                          echo "<input type='hidden' name='community_id' value='" . $row["c_ID"] . "' />";
+                          echo "<input type='submit' name='view' value='View' />";
+                          echo "</form>";
+                          //echo "<a href = '../community/community_page.php?c_ID=".$row['c_ID']."'> View </a>";
                         }
                         else
                         {
@@ -145,8 +152,9 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
                         echo "<input type='hidden' name='community_id' value='" . $row["c_ID"] . "' />";
                         echo "<input type='hidden' name='student_id' value='" . $_SESSION["s_ID"] . "' />";
                         echo "<input type='submit' name='join' value='Join' />";
+                        echo "<input type='submit' name='view' value='View' />";
                         echo "</form>";
-                        echo "<a href = '../community/community_page.php?c_ID=".$row['c_ID']."'> View </a>";
+                        //echo "<a href = '../community/community_page.php?c_ID=".$row['c_ID']."'> View </a>";
 
                         }
                         ?>
@@ -158,40 +166,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
         </table>
     </form>
 
-    <?php
 
-    //if the form is posted
-    if (isset($_POST["join"])) 
-    {
-    $student_id = $_POST["student_id"];
-    $community_id = $_POST["community_id"];
-    //check if the user is already in the community
-    $sql = "SELECT * FROM joins WHERE s_ID = '$student_id' AND c_ID = '$community_id'";
-    $result = mysqli_query($connection, $sql);
-    if(mysqli_num_rows($result) > 0)
-    {
-        // record already exists
-        echo "<script>alert('You have already joined this community.');</script>";
-    } 
-    
-    else 
-    {
-        // insert the record
-        $sql = "INSERT INTO joins (s_ID, c_ID) VALUES ('$student_id','$community_id')";
-        if(mysqli_query($connection, $sql))
-        {
-            // join successful
-            echo "<script>alert('You have successfully joined the community.');</script>";
-        } 
-    
-        else 
-        {
-            // join failed
-            echo "<script>alert('Failed to join the community. Please try again.');</script>";
-        }
-    }
-}
-    ?>
 </center>
 
     </div>  
