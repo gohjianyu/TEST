@@ -9,7 +9,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<title>Community Page</title>
+<title>Event Detail</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
@@ -17,6 +17,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="../homepage/homepage2.css">
+<link rel="stylesheet" href="../community/community.css">
+<link rel="stylesheet" href="../bg/bg.css">
 
 <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
 
@@ -41,7 +43,7 @@ $e_IDURL = $_GET['e_ID'];
     if (isset($_POST["reserve"])) 
     {
     date_default_timezone_set('Asia/Kuala_Lumpur');
-    $currentDate = date('Y-m-d');  // Format: YYYY-MM-DD
+    $currenpate = date('Y-m-d');  // Format: YYYY-MM-DD
     $currentTime = date('H:i:s');  // Format: HH:MM:SS
     $e_ID = $_POST["event_ID"];
     $student_id = $_POST["student_id"];
@@ -57,7 +59,7 @@ $e_IDURL = $_GET['e_ID'];
     else 
     {
         // insert the record
-        $sql = "INSERT INTO reservation (`r_date`, `r_time`,`s_ID` , `e_ID`) VALUES ('$currentDate','$currentTime','$student_id' , '$e_ID')";
+        $sql = "INSERT INTO reservation (`r_date`, `r_time`,`s_ID` , `e_ID`) VALUES ('$currenpate','$currentTime','$student_id' , '$e_ID')";
         if(mysqli_query($connection, $sql))
         {
             // join successful
@@ -129,20 +131,22 @@ $e_IDURL = $_GET['e_ID'];
     //when the leave is pressed
     if(isset($_POST["leave"]))
     {
-      //check if the student is in this community
-      $dltquery = "SELECT * FROM joins WHERE s_ID = {$_SESSION["s_ID"]} AND c_ID = '$c_IDURL'";
-      $deltqueryresult = mysqli_query($connection, $dltquery);
+      // //check if the student is in this community
+      // $dltquery = "SELECT * FROM joins WHERE s_ID = {$_SESSION["s_ID"]} AND c_ID = '$c_IDURL'";
+      // $deltqueryresult = mysqli_query($connection, $dltquery);
       //counts the number of admins in this community 
-      $query_count = "SELECT COUNT(*)AS count FROM `joins` WHERE role = 'admin' AND c_ID = $c_IDURL";
+      $query_count = "SELECT COUNT(*) AS count FROM `joins` WHERE role = 'admin' AND c_ID = $c_IDURL";
       $query_count_run = mysqli_query($connection, $query_count);
+      $count_result = mysqli_fetch_assoc($query_count_run);
+      $admin_count = $count_result['count'];
       //selects the admins in this community 
       $query_is_admin = "SELECT * FROM `joins` WHERE s_ID = {$_SESSION["s_ID"]} AND c_ID = $c_IDURL AND role = 'admin'";
       $query_is_admin_run = mysqli_query($connection, $query_is_admin);
       //check if there is less then one admin in this community 
-        if((mysqli_num_rows($query_count_run) <= 1 )&& (mysqli_num_rows($query_is_admin_run)))
-        {
-          echo "<script>alert('YOU SHALL NOT LEAVE.');</script>";    
-        }
+      if(($admin_count <= 1 )&& (mysqli_num_rows($query_is_admin_run)))
+      {
+         echo "<script>alert('YOU SHALL NOT LEAVE.');</script>";    
+      }
         else
         {
           //student can leave this community
@@ -174,14 +178,21 @@ $e_IDURL = $_GET['e_ID'];
           echo "<script>alert('Failed to join the community. Please try again.');</script>";
         }
     }
+
+    if (isset($_POST["view"]))
+    {
+      $community_id = $_POST['community_id'];
+      header ("Location: ../community/community_page.php?c_ID=".$community_id);
+    } 
+    
 ?>
 
 <!-- Community Content -->
 <div class="w3-row-padding w3-padding-64 w3-container">
-  <div class="w3-content">
-    <div class="w3-twothird">
+  <div class="row">
+    <div class="rightcolumn">
       
-    <div class="communityStuff">
+    <div class="card">
 
 <?php
 
@@ -210,17 +221,22 @@ $e_IDURL = $_GET['e_ID'];
         echo "<form method='POST'>";
         echo "<input type='hidden' name='community_id' value='" . $c_IDURL . "' />";
         echo "<input type='hidden' name='student_id' value='" . $_SESSION["s_ID"] . "' />";
-        echo "<input type='submit' name='leave' value='Leave' />";
+        echo "<input type='submit' name='leave' id = 'leave' value='Leave' /> <br>";
+        echo "<input type='submit' name='view' id='view' value='View' />";
+
         echo "</form>";
+        
     }
     else
     {
         echo "<form method='POST'>";
         echo "<input type='hidden' name='community_id' value='" . $c_IDURL . "' />";
         echo "<input type='hidden' name='student_id' value='" . $_SESSION["s_ID"] . "' />";
-        echo "<input type='submit' name='join' value='Join' />";
+        echo "<input type='submit' name='join' id = 'join' value='Join' /> <br>";
+        echo "<input type='submit' name='view' id='view' value='View' />";
         echo "</form>";
     }
+
 }
 
 else 
@@ -230,23 +246,25 @@ else
 
     ?>
 
-      <div class="eventStuff">
+      
       <?php
-      //check if the user is an admin of the community 
-      $querypost = "SELECT * FROM `joins` WHERE s_ID = {$_SESSION["s_ID"]} AND c_ID = $c_IDURL AND role = 'admin'";
-      $querypostrun = mysqli_query($connection, $querypost);
-      //check if the user is an admin or committee of the community
-      $querypost2 = "SELECT * FROM `joins` WHERE s_ID = {$_SESSION["s_ID"]} AND c_ID = $c_IDURL AND (role = 'admin' OR role = 'committee')";
-      $querypostrun2 = mysqli_query($connection, $querypost2);
+      // // check if the user is an admin of the community 
+      // $querypost = "SELECT * FROM `joins` WHERE s_ID = {$_SESSION["s_ID"]} AND c_ID = $c_IDURL AND role = 'admin'";
+      // $querypostrun = mysqli_query($connection, $querypost);
+      // check if the user is an admin or committee of the community
+      // $querypost2 = "SELECT * FROM `joins` WHERE s_ID = {$_SESSION["s_ID"]} AND c_ID = $c_IDURL AND (role = 'committee')";
+      // $querypostrun2 = mysqli_query($connection, $querypost2);
 
-      //if the user is an admin
-      if(mysqli_num_rows($querypostrun) > 0)
-      {
-        echo "<form method='POST' action=''>";
-        echo "<td><input type='submit' name='post_event' value='Post Event' /> </td>";
-        echo "<td><input type='submit' name='member_list' value='Member List' /> </td>";
-        echo "</form>";
-      }
+      // //if the user is an admin
+      // if(mysqli_num_rows($querypostrun) > 0)
+      // {
+      //   echo "<form method='POST' action=''>";
+      //   echo "<input type='submit' name='post_event' id = 'post_event' value='Post Event' /> <br>";
+      //   echo "<input type='submit' name='member_list' id = 'member_list' value='Member List' />";
+      //   echo "</form>";
+      // }
+      
+
 
       //select the event information in this community
       $query_view_event= "SELECT `e_ID`,`e_name`, `e_description`, `e_venue`, `e_date_start`, `e_date_end`, `e_time` FROM event_ WHERE c_ID = $c_IDURL AND e_ID= $e_IDURL";
@@ -254,26 +272,32 @@ else
       //if there is event posted in this community
       if(mysqli_num_rows($query_view_event_run) > 0)
       {
-        echo '<table width="150%" border="1" cellpadding="5" cellspacing="5">';
-        echo '<tr><th>Event Name</th><th>Event Description</th><th>Event Venue</th><th>Event Start Date</th><th>Event End Date</th><th>Event Time</th><th>Action</th>';
+        // echo '<table width="150%" border="1" cellpadding="5" cellspacing="5">';
+        // echo '<tr><th>Event Name</th><th>Event Description</th><th>Event Venue</th><th>Event Start Date</th><th>Event End Date</th><th>Event Time</th><th>Action</th>';
         
         //if the user is an admin or committee
-        if(mysqli_num_rows($querypostrun2) > 0)
-        {
-          echo '<th>Action</th><th>Action</th>';
-        }
-        echo '</tr>';
-        
+        // if(mysqli_num_rows($querypostrun2) > 0)
+        // {
+        //   //echo '<th>Action</th><th>Action</th>';
+        // }
+        //echo '</tr>';
+        ?>
+        </div>
+        </div>
+
+        <div class="leftcolumn">
+        <?php
         //print out the event in this comminity
         $row = mysqli_fetch_assoc($query_view_event_run);
-        
-          echo '<tr>';
-          echo "<td>" . $row['e_name'] . "</td>";
-          echo "<td>" . $row['e_description'] . "</td>";
-          echo "<td>" . $row['e_venue'] . "</td>";
-          echo "<td>" . $row['e_date_start'] . "</td>";
-          echo "<td>" . $row['e_date_end'] . "</td>";
-          echo "<td>" . $row['e_time'] . "</td>";
+
+        ?><div class="card"><?php
+          //echo '<tr>';
+          echo "<h2><strong>" . $row['e_name'] . "</strong></h2>";
+          echo "<p><strong>" . $row['e_description'] . "</strong></p>";
+          echo "<p><strong> Venue: </strong>" . $row['e_venue'] . "</p>";
+          echo "<p><strong> Start Date: </strong>" . $row['e_date_start'] . "</p>";
+          echo "<p><strong> End Date: </strong>" . $row['e_date_end'] . "</p>";
+          echo "<p><strong> Time: </strong>" . $row['e_time'] . "</p>";
           
           //check if the user has reserved the event
           $query_reserve = "SELECT * FROM `reservation` WHERE s_ID = '{$_SESSION["s_ID"]}' AND e_ID = '{$row["e_ID"]}'";
@@ -285,38 +309,49 @@ else
             echo "<form method='POST' action=''>";
             echo "<input type='hidden' name='event_ID' value='" . $row["e_ID"] . "' />";
             echo "<input type='hidden' name='student_id' value='" . $_SESSION["s_ID"] . "' />";
-            echo "<td><input type='submit' name='cancel_reserve' value='Cancel reservation' /> </td>";
+            echo "<input type='submit' name='cancel_reserve' id='cancel_reserve' value='Cancel reservation' /> ";
             echo "</form>";
+            echo '<br>';
           }
           else{
             echo "<form method='POST' action=''>";
             echo "<input type='hidden' name='event_ID' value='" . $row["e_ID"] . "' />";
             echo "<input type='hidden' name='student_id' value='" . $_SESSION["s_ID"] . "' />";
-            echo "<td><input type='submit' name='reserve' value='Reserve Event' /> </td>";
+            echo "<input type='submit' name='reserve' id='reserve' value='Reserve Event' /> ";
             echo "</form>";
+            echo '<br>';
           }
-          //if the user is an admin or commitee in this community
-          if(mysqli_num_rows($querypostrun2) > 0)
-          {
-            echo "<form method='POST' action=''>";
-            echo "<input type='hidden' name='event_ID' value='" . $row["e_ID"] . "' />";
-            echo "<td><input type='submit' name='edit_event' value='Edit' /> </td>";
-            echo "<td><input type='submit' name='cancel_event' value='Cancel event' /> </td>";
-            echo "</form>";
-          }
-
-          echo '</tr>';
+          // //if the user is a commitee in this community
+          // if(mysqli_num_rows($querypostrun2) > 0)
+          // {
+          //   <div class = "committee_actions">
+          //   echo "<form method='POST' action=''>";
+          //   echo "<input type='hidden' name='event_ID' value='" . $row["e_ID"] . "' />";
+          //   echo "<input type='submit' name='edit_event' id='edit_event' value='Edit' /> ";
+          //   echo "</form>";
+          //   echo '<br>';
+          //   echo '</div>';
+          // }
+          // //if the user is an admin then show cancel event button
+          // if(mysqli_num_rows($querypostrun) > 0)
+          // { 
+          //   echo "<form method='POST' action=''>";
+          //   echo "<input type='hidden' name='event_ID' value='" . $row["e_ID"] . "' />";
+          //   echo "<input type='submit' name='cancel_event' id='cancel_event' value='Cancel event' /> ";
+          //   echo "</form>";
+          //   echo '<br>';
+          //   echo '</div>';
+          // }
+          //echo '</tr>';
           
+          echo '</div>';
+          echo '</div>';
         
-        
-        echo '</table>';
+        //echo '</table>';
       }
       
       
       ?>
-      </div>
-      </div>
-    </div>
   </div>
 </div>
 <!-- Footer -->
