@@ -17,15 +17,15 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="../homepage/homepage2.css">
+<link rel="stylesheet" href="create_community.css">
+<link rel="stylesheet" href="../feedback/form.css">
+<link rel="stylesheet" href="../bg/bg.css">
 <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
 
 <style>
-body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
-.w3-bar,h1,button {font-family: "Montserrat", sans-serif}
-.fa-anchor,.fa-coffee {font-size:200px}
 
-input{
-    width: 50%;
+input[type=file]{
+    width: 30%;
     height: 5%;
     border: 1px;
     border-radius: 5px;
@@ -61,8 +61,8 @@ require '../navbar.php';
             <label>Description: </label><br>
             <input type="text" name="c_description" placeholder="Enter Community Description"/><br> 
             <label>Community icon: (Max 64KB)</label><br>
-            <input type="file" name="c_image" id="c_image" /><br> 
-            <input type="submit" name="upload" value="Upload Data"/><br>
+            <input type="file" name="c_image" id="c_image" /><br> <br> <br>
+            <input type="submit" name="upload" value="Create Community"/><br>
             <!-- <button> Upload data</button> -->
         </form>
     </center>
