@@ -18,6 +18,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="../homepage/homepage2.css">
 <link rel="stylesheet" href="event.css">
+<link rel="stylesheet" href="../feedback/form.css">
+<link rel="stylesheet" href="../bg/bg.css">
 <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
 
 
@@ -95,6 +97,11 @@ if(isset($_POST['upload']))
           $errors[] = "End date must come after start date.";
         }
 
+        // Validate for backdated event
+        if ($e_start_date < date('Y-m-d')) {
+          $errors[] = "Cannot post a backdated event.";
+        }
+
         //if there are any errors, display them
         if (!empty($errors)) 
         {
@@ -124,8 +131,7 @@ if(isset($_POST['upload']))
             }
             if($query_run)
             {
-              // echo '<script type="text/javascript"> alert("Event posted successfully")</script>';
-              header ("Location: ../community/community_page.php?c_ID=".$c_IDURL);
+              header("Location: ../community/community_page.php?c_ID=" . $c_IDURL . "&post_event=success");
 
             }
           //}
@@ -158,7 +164,7 @@ if(isset($_POST['upload']))
             <label>Event end date: </label><br>
             <input type="date" name="e_end_date" placeholder="Enter Event end date (yyyy-mm-dd)"/><br>
             <label>Event description: </label><br>
-            <input type="text" name="e_description" placeholder="Enter Event Description"/><br> 
+            <textarea name="e_description" placeholder="Enter Event Description" style="max-width: 500px; max-height: 300px; width: 500px; height: 300px; min-width: 500px; min-height: 150px;"></textarea><br> 
             <label>Event time: </label><br>
             <input type="time" name="e_time" placeholder="Enter Event time"/><br>
             <label>Event venue: </label><br>
@@ -167,7 +173,7 @@ if(isset($_POST['upload']))
 
             <!-- <input type="file" name="c_image" id="c_image" /><br>  -->
             
-            <input type="submit" name="upload" value="Upload Data"/><br>
+            <input type="submit" name="upload" value="Post Event"/><br>
             
             <!-- <button> Upload data</button> -->
         </form>
