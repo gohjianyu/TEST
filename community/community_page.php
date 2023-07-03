@@ -3,6 +3,7 @@ session_start();
 if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
   header("Location: ../login/login2.php");
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -16,6 +17,8 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="../homepage/homepage2.css">
+<link rel="stylesheet" href="community.css">
+<link rel="stylesheet" href="../bg/bg.css">
 <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
 
 <style>
@@ -27,6 +30,16 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
 
 <?php
 require '../navbar.php';
+
+if (isset($_GET['feedback']) && $_GET['feedback'] === "success") {
+  echo '<script type="text/javascript"> alert("Thank You For Your Feedback")</script>';
+}
+if (isset($_GET['edit_event']) && $_GET['edit_event'] === "success") {
+  echo '<script type="text/javascript"> alert("Event updated successfully")</script>';
+}
+if (isset($_GET['post_event']) && $_GET['post_event'] === "success") {
+  echo '<script type="text/javascript"> alert("Event posted successfully")</script>';
+}
 ?>
 
 <!-- Header -->
@@ -38,17 +51,20 @@ $c_IDURL = $_GET['c_ID']; // Assuming you pass the community ID in the URL
 //if leave button is pressed
 if(isset($_POST["leave"]))
 {
-    //check if the student is in this community
-    $dltquery = "SELECT * FROM joins WHERE s_ID = {$_SESSION["s_ID"]} AND c_ID = '$c_IDURL'";
-    $deltqueryresult = mysqli_query($connection, $dltquery);
+    // //check if the student is in this community
+    // $dltquery = "SELECT * FROM joins WHERE s_ID = {$_SESSION["s_ID"]} AND c_ID = '$c_IDURL'";
+    // $deltqueryresult = mysqli_query($connection, $dltquery);
+
     //counts the number of admins in this community 
-    $query_count = "SELECT COUNT(*)AS count FROM `joins` WHERE role = 'admin' AND c_ID = $c_IDURL";
+    $query_count = "SELECT COUNT(*) AS count FROM `joins` WHERE role = 'admin' AND c_ID = $c_IDURL";
     $query_count_run = mysqli_query($connection, $query_count);
+    $count_result = mysqli_fetch_assoc($query_count_run);
+    $admin_count = $count_result['count'];
     //selects the admins in this community 
     $query_is_admin = "SELECT * FROM `joins` WHERE s_ID = {$_SESSION["s_ID"]} AND c_ID = $c_IDURL AND role = 'admin'";
     $query_is_admin_run = mysqli_query($connection, $query_is_admin);
     //check if there is less then one admin in this community 
-      if((mysqli_num_rows($query_count_run) <= 1 )&& (mysqli_num_rows($query_is_admin_run)))
+      if(($admin_count <= 1 )&& (mysqli_num_rows($query_is_admin_run)))
       {
          echo "<script>alert('YOU SHALL NOT LEAVE.');</script>";    
       }
@@ -94,7 +110,7 @@ if(isset($_POST["leave"]))
     if (isset($_POST["reserve"])) 
     {
     date_default_timezone_set('Asia/Kuala_Lumpur');
-    $currentDate = date('Y-m-d');  // Format: YYYY-MM-DD
+    $currenpate = date('Y-m-d');  // Format: YYYY-MM-DD
     $currentTime = date('H:i:s');  // Format: HH:MM:SS
     $e_ID = $_POST["event_ID"];
     $student_id = $_POST["student_id"];
@@ -110,7 +126,7 @@ if(isset($_POST["leave"]))
     else 
     {
         // insert the record
-        $sql = "INSERT INTO reservation (`r_date`, `r_time`,`s_ID` , `e_ID`) VALUES ('$currentDate','$currentTime','$student_id' , '$e_ID')";
+        $sql = "INSERT INTO reservation (`r_date`, `r_time`,`s_ID` , `e_ID`) VALUES ('$currenpate','$currentTime','$student_id' , '$e_ID')";
         if(mysqli_query($connection, $sql))
         {
             // join successful
@@ -172,13 +188,35 @@ if(isset($_POST["leave"]))
       }
       </script>';
     }
+
+    //if the feedback button is pressed, redirect the user to feedback page
+    if (isset($_POST["feedback"])) 
+    {
+      $e_ID = $_POST["event_ID"];
+      header ("Location: ../feedback/feedback.php?e_ID=".$e_ID."&c_ID=".$c_IDURL);
+
+    }
+
+    //if the check reservation button is pressed, redirect the user to check reservation page
+    if (isset($_POST["check_reservation"])) 
+    {
+      $e_ID = $_POST["event_ID"];
+      header ("Location: ../reservation/check_reservation.php?e_ID=".$e_ID);
+    }
+
+    //if the view feedback button is pressed, redirect the user to the view feedback page
+    if (isset($_POST["view_feedback"])) 
+    {
+      $e_ID = $_POST["event_ID"];
+      header ("Location: ../feedback/view_feedback.php?e_ID=".$e_ID);
+    }
 ?>
 
 <!-- Community Content -->
 <div class="w3-row-padding w3-padding-64 w3-container">
-  <div class="w3-content">
-    <div class="w3-twothird">
-      <div class="communityStuff">
+  <div class="row">
+      <div class="rightcolumn">
+        <div class="card">
 
     <?php
       // Connect to the database
@@ -210,7 +248,7 @@ if(isset($_POST["leave"]))
             echo "<form method='POST'>";
             echo "<input type='hidden' name='community_id' value='" . $c_IDURL . "' />";
             echo "<input type='hidden' name='student_id' value='" . $_SESSION["s_ID"] . "' />";
-            echo "<input type='submit' name='leave' value='Leave' />";
+            echo "<input type='submit' name='leave' id = 'leave' value='Leave' />";
             echo "</form>";
         }
         else
@@ -218,7 +256,7 @@ if(isset($_POST["leave"]))
             echo "<form method='POST'>";
             echo "<input type='hidden' name='community_id' value='" . $c_IDURL . "' />";
             echo "<input type='hidden' name='student_id' value='" . $_SESSION["s_ID"] . "' />";
-            echo "<input type='submit' name='join' value='Join' />";
+            echo "<input type='submit' name='join' id = 'join' value='Join' />";
             echo "</form>";
         }
     }
@@ -230,22 +268,23 @@ if(isset($_POST["leave"]))
 
     
       ?>
-      </div>
       
-      <div class="eventStuff">
+
+      
+      
       <?php
       //check if the user is an admin of the community 
       $querypost = "SELECT * FROM `joins` WHERE s_ID = {$_SESSION["s_ID"]} AND c_ID = $c_IDURL AND role = 'admin'";
       $querypostrun = mysqli_query($connection, $querypost);
-      //check if the user is an admin or committee of the community
-      $querypost2 = "SELECT * FROM `joins` WHERE s_ID = {$_SESSION["s_ID"]} AND c_ID = $c_IDURL AND (role = 'admin' OR role = 'committee')";
+      //check if the user is a committee of the community
+      $querypost2 = "SELECT * FROM `joins` WHERE s_ID = {$_SESSION["s_ID"]} AND c_ID = $c_IDURL AND (role = 'committee')";
       $querypostrun2 = mysqli_query($connection, $querypost2);
       //if the user is an admin
       if(mysqli_num_rows($querypostrun) > 0)
       {
         echo "<form method='POST' action=''>";
-        echo "<td><input type='submit' name='post_event' value='Post Event' /> </td>";
-        echo "<td><input type='submit' name='member_list' value='Member List' /> </td>";
+        echo "<input type='submit' name='post_event' id = 'post_event' value='Post Event' /> <br>";
+        echo "<input type='submit' name='member_list' id = 'member_list' value='Member List' />";
         echo "</form>";
       }
       //select the event information in this community
@@ -255,26 +294,38 @@ if(isset($_POST["leave"]))
       //if there is event posted in this community
       if(mysqli_num_rows($query_view_event_run) > 0)
       {
-        echo '<table width="150%" border="1" cellpadding="5" cellspacing="5">';
-        echo '<tr><th>Event Name</th><th>Event Description</th><th>Event Venue</th><th>Event Start Date</th><th>Event End Date</th><th>Event Time</th><th>Action</th>';
+        // echo '<table width="150%" border="1" cellpadding="5" cellspacing="5">';
+        // echo '<tr><th>Event Name</th><th>Event Description</th><th>Event Venue</th><th>Event Start Date</th><th>Event End Date</th><th>Event Time</th><th>Reserve Event</th><th>Feedback</th>';
         
         //if the user is an admin or committee
         if(mysqli_num_rows($querypostrun2) > 0)
         {
-          echo '<th>Action</th><th>Action</th>';
+          // echo '<th>Edit Event</th><th>Check Reservation</th><th>View Feedback</th>';
         }
-        echo '</tr>';
         
+        //if the user is an admin 
+        if(mysqli_num_rows($querypostrun) > 0)
+        {
+          // echo '<th>Cancel Event</th>';
+        }
+        
+        // echo '</tr>';
+        
+        ?>
+        </div>
+        </div>
+        <div class="leftcolumn"><?php
         //print out all the event in this comminity
         while($row = mysqli_fetch_assoc($query_view_event_run))
         {
-          echo '<tr>';
-          echo "<td>" . $row['e_name'] . "</td>";
-          echo "<td>" . $row['e_description'] . "</td>";
-          echo "<td>" . $row['e_venue'] . "</td>";
-          echo "<td>" . $row['e_date_start'] . "</td>";
-          echo "<td>" . $row['e_date_end'] . "</td>";
-          echo "<td>" . $row['e_time'] . "</td>";
+          // echo '<tr>';
+          ?><div class="card"><?php
+          echo "<h2><strong>" . $row['e_name']. "</strong></h2>" ;
+          echo "<p>" . $row['e_description'] . "</p>";
+          echo "<p><strong> Venue: </strong>" . $row['e_venue'] . "</p>";
+          echo "<p><strong> Start Date: </strong>" . $row['e_date_start'] . "</p>";
+          echo "<p><strong> End Date: </strong>" . $row['e_date_end'] . "</p>";
+          echo "<p><strong> Time: </strong>" . $row['e_time'] . "</p>";
           
           //check if the user has reserved the event
           $query_reserve = "SELECT * FROM `reservation` WHERE s_ID = '{$_SESSION["s_ID"]}' AND e_ID = '{$row["e_ID"]}'";
@@ -286,38 +337,79 @@ if(isset($_POST["leave"]))
             echo "<form method='POST' action=''>";
             echo "<input type='hidden' name='event_ID' value='" . $row["e_ID"] . "' />";
             echo "<input type='hidden' name='student_id' value='" . $_SESSION["s_ID"] . "' />";
-            echo "<td><input type='submit' name='cancel_reserve' value='Cancel reservation' /> </td>";
+            echo "<input type='submit' name='cancel_reserve' id = 'cancel_reserve' value='Cancel reservation' />";
             echo "</form>";
           }
-          else{
-            echo "<form method='POST' action=''>";
-            echo "<input type='hidden' name='event_ID' value='" . $row["e_ID"] . "' />";
-            echo "<input type='hidden' name='student_id' value='" . $_SESSION["s_ID"] . "' />";
-            echo "<td><input type='submit' name='reserve' value='Reserve Event' /> </td>";
-            echo "</form>";
-          }
-          //if the user is an admin or commitee in this community
-          if(mysqli_num_rows($querypostrun2) > 0)
+          
+          else
           {
             echo "<form method='POST' action=''>";
             echo "<input type='hidden' name='event_ID' value='" . $row["e_ID"] . "' />";
-            echo "<td><input type='submit' name='edit_event' value='Edit' /> </td>";
-            echo "<td><input type='submit' name='cancel_event' value='Cancel event' /> </td>";
+            echo "<input type='hidden' name='student_id' value='" . $_SESSION["s_ID"] . "' />";
+            echo "<input type='submit' name='reserve' id = 'reserve' value='Reserve Event' />";
             echo "</form>";
           }
 
-          echo '</tr>';
+          //if the event has ended
+          if(date('Y-m-d') > $row['e_date_end'])
+          {
+            echo "<form method='POST' action=''>";
+            echo "<input type='hidden' name='event_ID' value='" . $row["e_ID"] . "' />";
+            echo "<input type='submit' name='feedback' id = 'feedback' value='Feedback' /> ";
+            echo "</form>";
+            echo '<br>';
+          }
+
+          //if the event has not ended 
+          else if(date('Y-m-d') <= $row['e_date_end'])
+          {
+            echo "<form method='POST' action=''>";
+            echo "<input type='submit' name='#' id = 'feedback_not_available' value='Feedback not yet available' disabled style='background-color: lightgray;' />";
+            echo "</form>";
+            echo '<br>';
+          }
+
+          //if the user is a commitee in this community
+          if(mysqli_num_rows($querypostrun2) > 0)
+          {
+            ?><div class="committee_actions"><?php
+            echo '<br>';
+            echo "<form method='POST' action=''>";
+            echo "<input type='hidden' name='event_ID' value='" . $row["e_ID"] . "' />";
+            echo "<input type='submit' name='edit_event' id='edit_event' value='Edit' /> ";
+            echo "<input type='submit' name='check_reservation' id = 'check_reservation' value='Check Reservation' /> ";
+            echo "<input type='submit' name='view_feedback' id = 'view_feedback' value='View Feedback' /> ";
+            echo "</form>";
+            echo '<br>';
+            echo '</div>';
+          }
+          
+          //if the user is an admin then show cancel event button
+          if(mysqli_num_rows($querypostrun) > 0)
+          { 
+            ?><div class="committee_actions"><?php
+            echo '<br>';
+            echo "<form method='POST' action=''>";
+            echo "<input type='hidden' name='event_ID' value='" . $row["e_ID"] . "' />";
+            echo "<input type='submit' name='edit_event' id='edit_event' value='Edit' /> ";
+            echo "<input type='submit' name='check_reservation' id = 'check_reservation' value='Check Reservation' /> ";
+            echo "<input type='submit' name='view_feedback' id = 'view_feedback' value='View Feedback' /> ";
+            echo "<input type='submit' name='cancel_event' id='cancel_event' value='Cancel event' /> ";
+            echo "</form>";
+            echo '<br>';
+            echo '</div>';
+          }
+          // echo '</tr>';
+          
+          echo '</div>';
           
         }
-        
-        echo '</table>';
+        // echo '</table>';
       }
       
       
       ?>
       </div>
-      
-    </div>
   </div>
 </div>
 <!-- Footer -->
