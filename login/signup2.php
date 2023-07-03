@@ -33,9 +33,12 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 			$errorMessage = "Please enter name";
 		}
 
-		
 		else if (strlen($email)== 0){
 			$errorMessage = "Please enter email";
+		}
+
+		else if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+        $errorMessage = "Invalid email format";
 		}
 		
 		else if (strlen($pword)== 0){
@@ -90,7 +93,7 @@ Contact Number: <INPUT TYPE = 'TEXT' Name ='c_no'  value="<?PHP print $c_no;?>" 
 <P>
 <!--<INPUT TYPE = "Submit" Name = "Submit1"  VALUE = "Register">-->
 <button>Register</button>
-<p class="message">Already registered? <a href="login2.php">Sign In </a></p><br>
+<p class="message">Already registered? <a href="login2.php">Login </a></p><br>
 
 <?PHP print "<strong>".$errorMessage."</strong>";?>
 
