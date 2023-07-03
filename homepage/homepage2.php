@@ -17,6 +17,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Montserrat">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="homepage2.css">
+<link rel="stylesheet" href="../bg/bg.css">
 <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
 
 <style>
@@ -24,17 +25,21 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Lato", sans-serif}
 .w3-bar,h1,button {font-family: "Montserrat", sans-serif}
 .fa-anchor,.fa-coffee {font-size:200px}
 
-        border: none;
-        color: white;
-        padding: 15px 32px;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin: 4px 2px;
-        cursor: pointer;
-        .button1 {background-color: #008CBA;} 
-        .button2 {background-color: #4CAF50;} 
+#communities{
+    text-align: center;
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+
+  #calendar{
+    text-align: center;
+  }
+
+  input[type=submit]
+  {
+    width: 80%;
+  }
+  
 </style>
 </head>
 <body>
@@ -95,12 +100,14 @@ if (isset($_POST["view"]))
 <!-- First Grid -->
 <div class="w3-row-padding w3-padding-64 w3-container">
   <div class="w3-content">
-    <div class="w3-twothird">
-      <h1>Calendar</h1>
+    <div class="">
+      <h1 id = 'calendar'>Calendar</h1>
       <?php
       require 'calendar.php'
       ?>
-      <h1>Communities</h1> 
+
+
+      <h1 id = 'communities'>Communities</h1> 
 
       <center>
     <form action="" method="POST">
@@ -142,7 +149,7 @@ if (isset($_POST["view"]))
                           echo "<button disabled>Joined</button>";
                           echo "<form method='POST'>";
                           echo "<input type='hidden' name='community_id' value='" . $row["c_ID"] . "' />";
-                          echo "<input type='submit' name='view' value='View' />";
+                          echo "<input type='submit' name='view' id='view' value='View' />";
                           echo "</form>";
                           //echo "<a href = '../community/community_page.php?c_ID=".$row['c_ID']."'> View </a>";
                         }
@@ -151,8 +158,8 @@ if (isset($_POST["view"]))
                         echo "<form method='POST'>";
                         echo "<input type='hidden' name='community_id' value='" . $row["c_ID"] . "' />";
                         echo "<input type='hidden' name='student_id' value='" . $_SESSION["s_ID"] . "' />";
-                        echo "<input type='submit' name='join' value='Join' />";
-                        echo "<input type='submit' name='view' value='View' />";
+                        echo "<input type='submit' name='join' id='join' value='Join' />";
+                        echo "<input type='submit' name='view' id='view' value='View' />";
                         echo "</form>";
                         //echo "<a href = '../community/community_page.php?c_ID=".$row['c_ID']."'> View </a>";
 
@@ -169,7 +176,6 @@ if (isset($_POST["view"]))
 
 </center>
 
-    </div>  
   </div>
 </div>
 
