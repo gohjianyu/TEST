@@ -50,9 +50,6 @@ require '../navbar.php';
 
 <!-- Header -->
 <header class="w3-container w3-black w3-center" style="padding:128px 16px">
-<!-- <h2>Welcome <?php echo $_SESSION['name']?></h2> -->
-<!-- <h1 class="w3-margin w3-jumbo">CY T-SHIRT</h1>
-  <p class="w3-xlarge">Buy your OWN Tees!</p> -->
 <img src="distedlogo.png" alt="Disted Logo" style= "height:20%; width:50%;"> 
 </header>
 
@@ -106,7 +103,6 @@ if (isset($_POST["view"]))
       require 'calendar.php'
       ?>
 
-
       <h1 id = 'communities'>Communities</h1> 
 
       <center>
@@ -151,7 +147,6 @@ if (isset($_POST["view"]))
                           echo "<input type='hidden' name='community_id' value='" . $row["c_ID"] . "' />";
                           echo "<input type='submit' name='view' id='view' value='View' />";
                           echo "</form>";
-                          //echo "<a href = '../community/community_page.php?c_ID=".$row['c_ID']."'> View </a>";
                         }
                         else
                         {
@@ -161,8 +156,6 @@ if (isset($_POST["view"]))
                         echo "<input type='submit' name='join' id='join' value='Join' />";
                         echo "<input type='submit' name='view' id='view' value='View' />";
                         echo "</form>";
-                        //echo "<a href = '../community/community_page.php?c_ID=".$row['c_ID']."'> View </a>";
-
                         }
                         ?>
                     </td>
