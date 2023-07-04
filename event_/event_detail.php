@@ -1,4 +1,3 @@
-
 <?php
 session_start();
 if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
@@ -131,9 +130,6 @@ $e_IDURL = $_GET['e_ID'];
     //when the leave is pressed
     if(isset($_POST["leave"]))
     {
-      // //check if the student is in this community
-      // $dltquery = "SELECT * FROM joins WHERE s_ID = {$_SESSION["s_ID"]} AND c_ID = '$c_IDURL'";
-      // $deltqueryresult = mysqli_query($connection, $dltquery);
       //counts the number of admins in this community 
       $query_count = "SELECT COUNT(*) AS count FROM `joins` WHERE role = 'admin' AND c_ID = $c_IDURL";
       $query_count_run = mysqli_query($connection, $query_count);
@@ -243,44 +239,13 @@ else
 {
     echo '<p>Community not found.</p>';
 }
-
-    ?>
-
-      
-      <?php
-      // // check if the user is an admin of the community 
-      // $querypost = "SELECT * FROM `joins` WHERE s_ID = {$_SESSION["s_ID"]} AND c_ID = $c_IDURL AND role = 'admin'";
-      // $querypostrun = mysqli_query($connection, $querypost);
-      // check if the user is an admin or committee of the community
-      // $querypost2 = "SELECT * FROM `joins` WHERE s_ID = {$_SESSION["s_ID"]} AND c_ID = $c_IDURL AND (role = 'committee')";
-      // $querypostrun2 = mysqli_query($connection, $querypost2);
-
-      // //if the user is an admin
-      // if(mysqli_num_rows($querypostrun) > 0)
-      // {
-      //   echo "<form method='POST' action=''>";
-      //   echo "<input type='submit' name='post_event' id = 'post_event' value='Post Event' /> <br>";
-      //   echo "<input type='submit' name='member_list' id = 'member_list' value='Member List' />";
-      //   echo "</form>";
-      // }
-      
-
-
+  
       //select the event information in this community
       $query_view_event= "SELECT `e_ID`,`e_name`, `e_description`, `e_venue`, `e_date_start`, `e_date_end`, `e_time` FROM event_ WHERE c_ID = $c_IDURL AND e_ID= $e_IDURL";
       $query_view_event_run = mysqli_query($connection, $query_view_event);
       //if there is event posted in this community
       if(mysqli_num_rows($query_view_event_run) > 0)
       {
-        // echo '<table width="150%" border="1" cellpadding="5" cellspacing="5">';
-        // echo '<tr><th>Event Name</th><th>Event Description</th><th>Event Venue</th><th>Event Start Date</th><th>Event End Date</th><th>Event Time</th><th>Action</th>';
-        
-        //if the user is an admin or committee
-        // if(mysqli_num_rows($querypostrun2) > 0)
-        // {
-        //   //echo '<th>Action</th><th>Action</th>';
-        // }
-        //echo '</tr>';
         ?>
         </div>
         </div>
@@ -321,43 +286,16 @@ else
             echo "</form>";
             echo '<br>';
           }
-          // //if the user is a commitee in this community
-          // if(mysqli_num_rows($querypostrun2) > 0)
-          // {
-          //   <div class = "committee_actions">
-          //   echo "<form method='POST' action=''>";
-          //   echo "<input type='hidden' name='event_ID' value='" . $row["e_ID"] . "' />";
-          //   echo "<input type='submit' name='edit_event' id='edit_event' value='Edit' /> ";
-          //   echo "</form>";
-          //   echo '<br>';
-          //   echo '</div>';
-          // }
-          // //if the user is an admin then show cancel event button
-          // if(mysqli_num_rows($querypostrun) > 0)
-          // { 
-          //   echo "<form method='POST' action=''>";
-          //   echo "<input type='hidden' name='event_ID' value='" . $row["e_ID"] . "' />";
-          //   echo "<input type='submit' name='cancel_event' id='cancel_event' value='Cancel event' /> ";
-          //   echo "</form>";
-          //   echo '<br>';
-          //   echo '</div>';
-          // }
-          //echo '</tr>';
-          
+
           echo '</div>';
           echo '</div>';
         
-        //echo '</table>';
       }
       
       
       ?>
   </div>
 </div>
-<!-- Footer -->
-<footer>
-  <!-- Footer content -->
-</footer>
 
 </body>
 </html>
