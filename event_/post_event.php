@@ -29,15 +29,10 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
 <?php
 require "C:/xampp/htdocs/event_management/navbar.php";
 ?>
-    <!-- <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">My Account</a>
-    <a href="#" class="w3-bar-item w3-button w3-hide-small w3-padding-large w3-hover-white">My Order</a> -->
 </div>
 </div>
 <!-- Header -->
 <header class="w3-container w3-black w3-center" style="padding:128px 16px">
-<!-- <h2>Welcome <?php echo $_SESSION['name']?></h2> -->
-<!-- <h1 class="w3-margin w3-jumbo">CY T-SHIRT</h1>
-  <p class="w3-xlarge">Buy your OWN Tees!</p> -->
 <img src="../homepage/distedlogo.png" alt="Disted Logo" style= "height:20%; width:50%;"> 
 </header>
 
@@ -62,7 +57,6 @@ if(isset($_POST['upload']))
     //if the connection is established 
     if($db)
     {
-      
         //check if the event of the same name is in the database
         $query = "SELECT * FROM event_ WHERE e_name = ?";
         $stmt = mysqli_prepare($connection, $query);
@@ -109,7 +103,6 @@ if(isset($_POST['upload']))
           $errorMessages = implode('\n', $errors);
           echo '<script type="text/javascript">alert("' . $errorMessages . '");</script>';
           $_SESSION['post_event_error_message'] = $errorMessages;
-          //echo $_SESSION['post_event_error_message'] ;
         }
 
         else
@@ -147,7 +140,6 @@ if(isset($_POST['upload']))
     }
 
 }
-//require '../footer/footer2.html';
 ?>
 
 <!-- First Grid -->
@@ -169,13 +161,8 @@ if(isset($_POST['upload']))
             <input type="time" name="e_time" placeholder="Enter Event time"/><br>
             <label>Event venue: </label><br>
             <input type="text" name="e_venue" placeholder="Enter Event venue"/><br>
-            <label>Community icon: (Max 64KB)</label><br>
-
-            <!-- <input type="file" name="c_image" id="c_image" /><br>  -->
-            
+            <label>Community icon: (Max 64KB)</label><br>            
             <input type="submit" name="upload" value="Post Event"/><br>
-            
-            <!-- <button> Upload data</button> -->
         </form>
     </center>
   </div>
