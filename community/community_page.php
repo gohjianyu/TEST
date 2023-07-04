@@ -22,8 +22,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
 <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
 
 <style>
-/* CSS styles for the community page */
-/* Customize the styles as per your requirements */
+
 </style>
 </head>
 <body>
@@ -32,14 +31,173 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
 require '../navbar.php';
 
 if (isset($_GET['feedback']) && $_GET['feedback'] === "success") {
-  echo '<script type="text/javascript"> alert("Thank You For Your Feedback")</script>';
+    // Get the current URL
+    $currentUrl = $_SERVER['REQUEST_URI'];
+  
+    // Remove the '&feedback=success' from the URL
+    $modifiedUrl = str_replace('&feedback=success', '', $currentUrl);
+    
+    // Print the JavaScript code to show the alert and redirect after a delay
+    echo '
+      <script type="text/javascript">
+        alert("Thank You For Your Feedback");
+        setTimeout(function() {
+          window.location.href = "' . $modifiedUrl . '";
+        }, 1); // Delay of 0.001 seconds 
+      </script>
+    ';
+    
+    // Stop further execution of PHP code
+    exit;
 }
 if (isset($_GET['edit_event']) && $_GET['edit_event'] === "success") {
-  echo '<script type="text/javascript"> alert("Event updated successfully")</script>';
+  // Get the current URL
+  $currentUrl = $_SERVER['REQUEST_URI'];
+  
+  // Remove the '&edit_event=success' from the URL
+  $modifiedUrl = str_replace('&edit_event=success', '', $currentUrl);
+  
+  // Print the JavaScript code to show the alert and redirect after a delay
+  echo '
+    <script type="text/javascript">
+      alert("Event updated successfully");
+      setTimeout(function() {
+        window.location.href = "' . $modifiedUrl . '";
+      }, 1); // Delay of 0.001 seconds 
+    </script>
+  ';
+  
+  // Stop further execution of PHP code
+  exit;
 }
+
 if (isset($_GET['post_event']) && $_GET['post_event'] === "success") {
-  echo '<script type="text/javascript"> alert("Event posted successfully")</script>';
+    // Get the current URL
+    $currentUrl = $_SERVER['REQUEST_URI'];
+  
+    // Remove the '&post_event=success' from the URL
+    $modifiedUrl = str_replace('&post_event=success', '', $currentUrl);
+    
+    // Print the JavaScript code to show the alert and redirect after a delay
+    echo '
+      <script type="text/javascript">
+        alert("Event posted successfully");
+        setTimeout(function() {
+          window.location.href = "' . $modifiedUrl . '";
+        }, 1); // Delay of 0.001 seconds 
+      </script>
+    ';
+    
+    // Stop further execution of PHP code
+    exit;
 }
+
+if (isset($_GET['reserve']) && $_GET['reserve'] === "success") {
+    // Get the current URL
+    $currentUrl = $_SERVER['REQUEST_URI'];
+  
+    // Remove the '&reserve=success' from the URL
+    $modifiedUrl = str_replace('&reserve=success', '', $currentUrl);
+    
+    // Print the JavaScript code to show the alert and redirect after a delay
+    echo '
+      <script type="text/javascript">
+        alert("You have successfully made a reservation for this event.");
+        setTimeout(function() {
+          window.location.href = "' . $modifiedUrl . '";
+        }, 1); // Delay of 0.001 seconds 
+      </script>
+    ';
+    
+    // Stop further execution of PHP code
+    exit;
+}
+
+if (isset($_GET['reserve']) && $_GET['reserve'] === "exist") {
+  // Get the current URL
+  $currentUrl = $_SERVER['REQUEST_URI'];
+
+  // Remove the '&reserve=exist' from the URL
+  $modifiedUrl = str_replace('&reserve=exist', '', $currentUrl);
+  
+
+  // Print the JavaScript code to show the alert and redirect after a delay
+  echo '
+    <script type="text/javascript">
+      alert("You have already made a reservation for this event.");
+      setTimeout(function() {
+        window.location.href = "' . $modifiedUrl . '";
+      }, 1); // Delay of 0.001 seconds 
+    </script>
+  ';
+  
+  // Stop further execution of PHP code
+  exit;
+}
+
+if (isset($_GET['reserve']) && $_GET['reserve'] === "fail") {
+  // Get the current URL
+  $currentUrl = $_SERVER['REQUEST_URI'];
+
+  // Remove the '&reserve=fail' from the URL
+  $modifiedUrl = str_replace('&reserve=fail', '', $currentUrl);
+  
+  // Print the JavaScript code to show the alert and redirect after a delay
+  echo '
+    <script type="text/javascript">
+      alert("Failed to make a reservation. Please try again.");
+      setTimeout(function() {
+        window.location.href = "' . $modifiedUrl . '";
+      }, 1); // Delay of 0.001 seconds 
+    </script>
+  ';
+  
+  // Stop further execution of PHP code
+  exit;
+}
+
+if (isset($_GET['cancel_reserve']) && $_GET['cancel_reserve'] === "success") {
+    // Get the current URL
+    $currentUrl = $_SERVER['REQUEST_URI'];
+  
+    // Remove the '&cancel_reserve=success' from the URL
+    $modifiedUrl = str_replace('&cancel_reserve=success', '', $currentUrl);
+    
+    // Print the JavaScript code to show the alert and redirect after a delay
+    echo '
+      <script type="text/javascript">
+        alert("Your reservation for this event has been canceled");
+        setTimeout(function() {
+          window.location.href = "' . $modifiedUrl . '";
+        }, 1); // Delay of 0.001 seconds 
+      </script>
+    ';
+    
+    // Stop further execution of PHP code
+    exit;
+}
+
+if (isset($_GET['cancel_reserve']) && $_GET['cancel_reserve'] === "fail") {
+  // Get the current URL
+  $currentUrl = $_SERVER['REQUEST_URI'];
+
+  // Remove the '&cancel_reserve=fail' from the URL
+  $modifiedUrl = str_replace('&cancel_reserve=fail', '', $currentUrl);
+  
+  // Print the JavaScript code to show the alert and redirect after a delay
+  echo '
+    <script type="text/javascript">
+      alert("Failed to cancel the reservation. Please try again.");
+      setTimeout(function() {
+        window.location.href = "' . $modifiedUrl . '";
+      }, 1); // Delay of 0.001 seconds 
+    </script>
+  ';
+  
+  // Stop further execution of PHP code
+  exit;
+}
+
 ?>
 
 <!-- Header -->
@@ -51,10 +209,6 @@ $c_IDURL = $_GET['c_ID']; // Assuming you pass the community ID in the URL
 //if leave button is pressed
 if(isset($_POST["leave"]))
 {
-    // //check if the student is in this community
-    // $dltquery = "SELECT * FROM joins WHERE s_ID = {$_SESSION["s_ID"]} AND c_ID = '$c_IDURL'";
-    // $deltqueryresult = mysqli_query($connection, $dltquery);
-
     //counts the number of admins in this community 
     $query_count = "SELECT COUNT(*) AS count FROM `joins` WHERE role = 'admin' AND c_ID = $c_IDURL";
     $query_count_run = mysqli_query($connection, $query_count);
@@ -66,7 +220,7 @@ if(isset($_POST["leave"]))
     //check if there is less then one admin in this community 
       if(($admin_count <= 1 )&& (mysqli_num_rows($query_is_admin_run)))
       {
-         echo "<script>alert('YOU SHALL NOT LEAVE.');</script>";    
+         echo "<script>alert('You Are The Only Admin In This Community, You Could Not Leave.');</script>";    
       }
       else
       {
@@ -120,8 +274,8 @@ if(isset($_POST["leave"]))
     if(mysqli_num_rows($result) > 0)
     {
         // record already exists
-        echo "<script>alert('You have already made a reservation for this event.');</script>";
-    } 
+        header ("Location: community_page.php?c_ID=".$c_IDURL."&reserve=exist");
+      } 
 
     else 
     {
@@ -129,19 +283,18 @@ if(isset($_POST["leave"]))
         $sql = "INSERT INTO reservation (`r_date`, `r_time`,`s_ID` , `e_ID`) VALUES ('$currenpate','$currentTime','$student_id' , '$e_ID')";
         if(mysqli_query($connection, $sql))
         {
-            // join successful
-            echo "<script>alert('You have successfully made a reservation for this event.');</script>";
+            // reserve successful
+            header ("Location: community_page.php?c_ID=".$c_IDURL."&reserve=success");
         } 
 
         else 
         {
-            // join failed
-            echo "<script>alert('Failed to make a reservation. Please try again.');</script>";
+            // reserve failed
+            header ("Location: community_page.php?c_ID=".$c_IDURL."&reserve=fail");
         }
     }
     }
-
-    
+  
     //checks if the user has pressed cancel reservation button
     if (isset($_POST["cancel_reserve"])) 
     {
@@ -150,15 +303,17 @@ if(isset($_POST["leave"]))
       //delete the record from the reservation table
       $querydlt_reserve = "DELETE FROM `reservation` WHERE s_ID =  $student_id AND e_ID = $e_ID";
       $query_rundlt_reserve = mysqli_query($connection, $querydlt_reserve);
-      
+      //cancel succeed 
       if($query_rundlt_reserve)
       {
-        echo "<script>alert('Your reservation for this event has been canceled');</script>";
+        header ("Location: community_page.php?c_ID=".$c_IDURL."&cancel_reserve=success");
+
       }
       else 
       {
         // cancel failed
-        echo "<script>alert('Failed to cancel the reservation. Please try again.');</script>";
+        header ("Location: community_page.php?c_ID=".$c_IDURL."&cancel_reserve=fail");
+
       }
     }
     
@@ -266,12 +421,7 @@ if(isset($_POST["leave"]))
         echo '<p>Community not found.</p>';
     }
 
-    
-      ?>
-      
-
-      
-      
+      ?>    
       <?php
       //check if the user is an admin of the community 
       $querypost = "SELECT * FROM `joins` WHERE s_ID = {$_SESSION["s_ID"]} AND c_ID = $c_IDURL AND role = 'admin'";
@@ -294,24 +444,8 @@ if(isset($_POST["leave"]))
       //if there is event posted in this community
       if(mysqli_num_rows($query_view_event_run) > 0)
       {
-        // echo '<table width="150%" border="1" cellpadding="5" cellspacing="5">';
-        // echo '<tr><th>Event Name</th><th>Event Description</th><th>Event Venue</th><th>Event Start Date</th><th>Event End Date</th><th>Event Time</th><th>Reserve Event</th><th>Feedback</th>';
-        
-        //if the user is an admin or committee
-        if(mysqli_num_rows($querypostrun2) > 0)
-        {
-          // echo '<th>Edit Event</th><th>Check Reservation</th><th>View Feedback</th>';
-        }
-        
-        //if the user is an admin 
-        if(mysqli_num_rows($querypostrun) > 0)
-        {
-          // echo '<th>Cancel Event</th>';
-        }
-        
-        // echo '</tr>';
-        
-        ?>
+              
+      ?>
         </div>
         </div>
         <div class="leftcolumn"><?php
@@ -399,12 +533,10 @@ if(isset($_POST["leave"]))
             echo '<br>';
             echo '</div>';
           }
-          // echo '</tr>';
           
           echo '</div>';
           
         }
-        // echo '</table>';
       }
       
       
@@ -412,9 +544,8 @@ if(isset($_POST["leave"]))
       </div>
   </div>
 </div>
-<!-- Footer -->
+
 <footer>
-  <!-- Footer content -->
 </footer>
 
 </body>
