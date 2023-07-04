@@ -29,3 +29,12 @@
     .button2 {
         background-color: #4CAF50;
     }
+
+    #memberTable{
+        border-collapse: collapse;
+    }
+
+    table{
+        border: 3px solid black;
+        
+    }

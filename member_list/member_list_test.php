@@ -19,6 +19,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="../homepage/homepage2.css">
     <link rel="stylesheet" href="member_list.css">
+    <link rel="stylesheet" href="../bg/bg.css">
 
     <script src='https://kit.fontawesome.com/a076d05399.js' crossorigin='anonymous'></script>
 
@@ -60,9 +61,6 @@ require '../navbar.php';
 
 <!-- Header -->
 <header class="w3-container w3-black w3-center" style="padding:128px 16px">
-    <!-- <h2>Welcome <?php echo $_SESSION['name']?></h2> -->
-    <!-- <h1 class="w3-margin w3-jumbo">CY T-SHIRT</h1>
-      <p class="w3-xlarge">Buy your OWN Tees!</p> -->
     <img src="../homepage/distedlogo.png" alt="Disted Logo" style="height:20%; width:50%;">
 </header>
 
@@ -83,8 +81,7 @@ if (isset($_POST['update_role'])) {
     // Check if the update query executed successfully
     if ($updateResult) {
         echo "<script>alert('Role updated successfully.');</script>";
-        // header("Location: ../member_list/member_list_test.php?c_ID=" . $c_IDURL);
-        // echo "<script>windows.location.reload();</script>";
+
 
     } else {
         echo "<script>alert('Error updating role.');</script>" . mysqli_error($connection);
@@ -119,7 +116,8 @@ if (isset($_POST['update_role'])) {
                         $query = "SELECT student.s_name, student.s_email, student.s_contact_num, joins.role, student.s_ID
                                   FROM student
                                   JOIN joins ON student.s_ID = joins.s_ID
-                                  WHERE joins.c_ID = $c_IDURL";
+                                  WHERE joins.c_ID = $c_IDURL 
+                                  ORDER BY `role`";
                                   
                         $query_run = mysqli_query($connection, $query);
                         if ($query_run) { 
