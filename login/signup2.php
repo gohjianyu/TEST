@@ -86,8 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <FORM NAME ="form1" METHOD ="POST" ACTION ="signup2.php">
 
 Name: <INPUT TYPE = 'TEXT' Name ='s_name'  value="<?PHP print $name;?>" >
-Email: <INPUT TYPE = 'TEXT' Name ='s_email'  value="<?PHP print $email;?>" >
-Password: <INPUT TYPE = 'password' Name ='s_password'  value="<?PHP print $pword;?>" >
+Email: <INPUT TYPE = 'TEXT' Name ='s_email'  value="<?PHP print $email;?>"  maxlength="20" >
+Password: <INPUT TYPE = 'password' Name ='s_password' value="<?PHP print $pword;?>" maxlength="16" >
 Contact Number: <INPUT TYPE = 'TEXT' Name ='c_no'  value="<?PHP print $c_no;?>" >
 
 <P>
