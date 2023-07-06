@@ -465,24 +465,32 @@ if(isset($_POST["leave"]))
           $query_reserve = "SELECT * FROM `reservation` WHERE s_ID = '{$_SESSION["s_ID"]}' AND e_ID = '{$row["e_ID"]}'";
           $query_reserve_run = mysqli_query($connection, $query_reserve);
 
-          //if the user has reserved the event
-          if(mysqli_num_rows($query_reserve_run)>0)
+          if(date('Y-m-d') >= $row['e_date_start'])
           {
             echo "<form method='POST' action=''>";
-            echo "<input type='hidden' name='event_ID' value='" . $row["e_ID"] . "' />";
-            echo "<input type='hidden' name='student_id' value='" . $_SESSION["s_ID"] . "' />";
-            echo "<input type='submit' name='cancel_reserve' id = 'cancel_reserve' value='Cancel reservation' />";
+            echo "<input type='submit' name='#' id = 'reservation_not_available' value='Reservation unavailable' disabled style='background-color: lightgray;' />";
             echo "</form>";
           }
+            //if the user has reserved the event
+            else if(mysqli_num_rows($query_reserve_run)>0)
+            {
+              echo "<form method='POST' action=''>";
+              echo "<input type='hidden' name='event_ID' value='" . $row["e_ID"] . "' />";
+              echo "<input type='hidden' name='student_id' value='" . $_SESSION["s_ID"] . "' />";
+              echo "<input type='submit' name='cancel_reserve' id = 'cancel_reserve' value='Cancel reservation' />";
+              echo "</form>";
+            }
+            
+            else
+            {
+              echo "<form method='POST' action=''>";
+              echo "<input type='hidden' name='event_ID' value='" . $row["e_ID"] . "' />";
+              echo "<input type='hidden' name='student_id' value='" . $_SESSION["s_ID"] . "' />";
+              echo "<input type='submit' name='reserve' id = 'reserve' value='Reserve Event' />";
+              echo "</form>";
+            }
+
           
-          else
-          {
-            echo "<form method='POST' action=''>";
-            echo "<input type='hidden' name='event_ID' value='" . $row["e_ID"] . "' />";
-            echo "<input type='hidden' name='student_id' value='" . $_SESSION["s_ID"] . "' />";
-            echo "<input type='submit' name='reserve' id = 'reserve' value='Reserve Event' />";
-            echo "</form>";
-          }
 
           //if the event has ended
           if(date('Y-m-d') > $row['e_date_end'])
