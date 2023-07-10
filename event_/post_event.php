@@ -27,7 +27,7 @@ if (!(isset($_SESSION['login']) && $_SESSION['login'] != '')) {
 <body>
 
 <?php
-require "C:/xampp/htdocs/event_management/navbar.php";
+require "../navbar.php";
 ?>
 </div>
 </div>
