@@ -12,7 +12,7 @@
   <div class="dropdown-content">
     <?php
 
-    require "C:/xampp/htdocs/event_management/configure.php";
+    require "../configure.php";
     // Connect to the database
     $connection = mysqli_connect(DB_SERVER, DB_USER, DB_PASS);
     $db = mysqli_select_db($connection, 'event_management');
