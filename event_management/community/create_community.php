@@ -43,7 +43,6 @@ require '../navbar.php';
 ?>
 <!-- Header -->
 <header class="w3-container w3-black w3-center" style="padding:128px 16px">
-
 <img src="../homepage/distedlogo.png" alt="Disted Logo" style= "height:20%; width:50%;"> 
 </header>
 
@@ -139,7 +138,6 @@ if(isset($_POST['upload']))
     }
 
 }
-
 ?>
 
 </body>
