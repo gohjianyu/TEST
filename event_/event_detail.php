@@ -268,8 +268,15 @@ else
           $query_reserve = "SELECT * FROM `reservation` WHERE s_ID = '{$_SESSION["s_ID"]}' AND e_ID = '{$row["e_ID"]}'";
           $query_reserve_run = mysqli_query($connection, $query_reserve);
 
+          if(date('Y-m-d') >= $row['e_date_start'])
+          {
+            echo "<form method='POST' action=''>";
+            echo "<input type='submit' name='#' id = 'reservation_not_available' value='Reservation unavailable' disabled style='background-color: lightgray;' />";
+            echo "</form>";
+          }
+
           //if the user has reserved the event
-          if(mysqli_num_rows($query_reserve_run)>0)
+          else if(mysqli_num_rows($query_reserve_run)>0)
           {
             echo "<form method='POST' action=''>";
             echo "<input type='hidden' name='event_ID' value='" . $row["e_ID"] . "' />";
