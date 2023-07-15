@@ -141,7 +141,7 @@ $e_IDURL = $_GET['e_ID'];
       //check if there is less then one admin in this community 
       if(($admin_count <= 1 )&& (mysqli_num_rows($query_is_admin_run)))
       {
-         echo "<script>alert('YOU SHALL NOT LEAVE.');</script>";    
+         echo "<script>alert('You Are The Only Admin In This Community, You Could Not Leave.');</script>";    
       }
         else
         {
